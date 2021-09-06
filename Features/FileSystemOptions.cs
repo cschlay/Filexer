@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Filexer.Features
 {
@@ -28,7 +29,26 @@ namespace Filexer.Features
             "snap"
         };
 
-        public readonly string[] includedFileExtensions = { "", ".pub", ".bashrc", ".pdf", ".txt" };
+        public static readonly string[] officeExtensions =
+        {
+            ".docx",
+            ".odt",
+            ".xlsx",
+            ".ods"
+        };
+        
+        public  readonly string[] includedFileExtensions = new string[] {
+            "",
+            ".pub",
+            ".bashrc",
+            ".pdf",
+            ".txt",
+            ".tex",
+            // Developer formats
+            ".json",
+            ".yaml",
+            ".md",
+        }.Concat(officeExtensions).ToArray();
 
         // TODO: Put to own class
         public bool CheckFileIgnore(string path)

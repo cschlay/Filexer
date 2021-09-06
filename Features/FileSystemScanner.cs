@@ -74,6 +74,10 @@ namespace Filexer.Features
             {
                 File.Copy(source, $"{_options.SecretsDirectory}/{timestamp}_{info.Name}");
             }
+            else if (Array.IndexOf(FileSystemOptions.officeExtensions, info.Extension) > -1)
+            {
+                File.Copy(source, $"{_options.OfficeDirectory}/{timestamp}_{info.Name}");
+            }
             else
             {
                 File.Copy(source, $"{_options.MiscDirectory}/{timestamp}_{info.Name}");

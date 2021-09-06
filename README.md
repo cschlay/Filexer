@@ -6,7 +6,7 @@ It ensures that
 - Git repositories are up-to-date and pushed to remote
 - PDFs and Office documents are collected in one place
 
-The backup layout is as follows
+The backup layout is quite flat since it is developer-centric backup so that migration between operating systems are simple.
 
 | Source | Target |
 | ------ | ------ |
