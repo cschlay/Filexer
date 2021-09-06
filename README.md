@@ -5,7 +5,6 @@ It ensures that
 
 - Git repositories are up-to-date and pushed to remote
 - PDFs and Office documents are collected in one place
-- Warns about unsafe credential storage
 
 The backup layout is as follows
 
@@ -19,7 +18,6 @@ The backup layout is as follows
 | Office 365 File | `office/` |
 | Everything else | `misc/` |
 
-
-Large files and binaries (images, videos, executables) are not indexed.
+Large files such as (images, videos, executables), installed software, and binaries are not indexed.
 
 Each back up will output a `.zip` as `YYYY-MM-DD-Thhmm.filexer.zip`. The time stamp is a variant of ISO 8601 standard.

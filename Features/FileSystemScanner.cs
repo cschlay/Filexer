@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 
 namespace Filexer.Features
 {
@@ -44,6 +45,11 @@ namespace Filexer.Features
             Console.WriteLine("Starting to index...");
             IndexDirectory(_options.UserHomePath, 0);
             Console.WriteLine($"Indexing finished.");
+            Console.WriteLine("Creating archive from collected files...");
+
+            string timestamp = DateTime.UtcNow.ToString("s").Replace(":", "");
+            string archiveName = $"{_workingDirectory.Parent!.FullName}/backup_{timestamp}.zip";
+            ZipFile.CreateFromDirectory(_workingDirectory.FullName, archiveName);
             Console.WriteLine($"Result stored at: {_workingDirectory.FullName}");
         }
 
