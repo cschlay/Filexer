@@ -14,17 +14,18 @@ namespace Filexer.Features
             _workingDirectory = workingDirectory;
         }
         
-        public void Clone(string sourcePath)
+        public void Clone(DirectoryInfo source)
         {
             Console.WriteLine("Cloning repository...");
+            string timestamp = source.LastWriteTimeUtc.ToString("s").Replace(":", "");
+            string target = $"{source.Name}_{timestamp}";
             var info = new ProcessStartInfo
             {
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
                 WorkingDirectory = $"{_workingDirectory.FullName}/projects",
                 FileName = "git",
-                Arguments = $"clone {sourcePath}"
-                
+                Arguments = $"clone {source.FullName} {target}"
             };
 
             var process = new Process
@@ -32,8 +33,6 @@ namespace Filexer.Features
                 StartInfo = info
             };
             process.Start();
-
-            
             process.WaitForExit();
             process.Close();
         }

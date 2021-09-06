@@ -72,7 +72,7 @@ namespace Filexer.Features
             if (ContainsRepository(directories))
             {
                 Console.WriteLine($"Git repository found: {info.Name}");
-                _git.Clone(path);
+                _git.Clone(info);
                 // TODO: Check last pull
                 // TODO: Check last push
                 // TODO: Check that it is up to date
