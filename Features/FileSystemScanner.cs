@@ -9,7 +9,7 @@ namespace Filexer.Features
     public class FileSystemScanner
     {
         private readonly FileSystemOptions _options;
-        
+
         /// <summary>
         /// Prepares scanning by settings.
         /// </summary>
@@ -23,28 +23,89 @@ namespace Filexer.Features
         public void Index()
         {
             Console.WriteLine("Starting to index...");
-            Console.WriteLine($"Checking home directory: {_options.UserHomePath}");
 
-            string[] directories = Directory.GetDirectories(_options.UserHomePath);
-
-            foreach (string directory in directories)
+            try
             {
-                var info = new DirectoryInfo(directory);
-                bool isHidden = (info.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden;
-                if (isHidden)
-                {
-                    Console.WriteLine(directory);
-                }
-                else
-                {
-                    // TODO: Directories like .ssh need to indexed.
-                }
+                Directory.Delete(_options.SyncDirectory, true);
             }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            DirectoryInfo sync = Directory.CreateDirectory(_options.SyncDirectory);
+            Console.WriteLine("Initializing sync directories...");
+            Directory.CreateDirectory(_options.DevDirectory);
+            Directory.CreateDirectory(_options.DocumentDirectory);
+            Directory.CreateDirectory(_options.ProjectDirectory);
+            Directory.CreateDirectory(_options.OfficeDirectory);
+            Directory.CreateDirectory(_options.MiscDirectory);
+            
+            IndexDirectory(_options.UserHomePath, 0);
+            Console.WriteLine($"Indexing finished.");
+            Console.WriteLine($"Result stored at: {sync.FullName}");
         }
 
-        private void Index(string path)
+        private bool IndexFile(string path, int depth)
         {
+            if (_options.CheckFileIgnore(path))
+            {
+                return false;
+            }
             
+            Console.WriteLine($"{depth} File: {path}");
+            // TODO: Index the files.
+            return true;
+        }
+        
+        private bool IndexDirectory(string path, int depth)
+        {
+            var info = new DirectoryInfo(path);
+
+            if (_options.CheckDirectoryIgnore(info))
+            {
+                return false;
+            }
+            
+            Console.WriteLine($"{depth} Directory: {info.Name} ({path})");
+            string[] directories = Directory.GetDirectories(path);
+            if (ContainsRepository(directories))
+            {
+                Console.WriteLine($"Git repository found: {info.Name}");
+                // TODO: Call it with "git clone"
+                // TODO: Check last pull
+                // TODO: Check last push
+                // TODO: Check that it is up to date
+                return true;
+            }
+            else
+            {
+                // Continue indexing normally
+                foreach (string directory in directories)
+                {
+                    IndexDirectory(directory, depth + 1);
+                }
+            }
+
+            string[] files = Directory.GetFiles(path);
+            foreach (var file in files)
+            {
+                IndexFile(file, depth);
+            }
+            return true;
+        }
+
+        private bool ContainsRepository(string[] directories)
+        {
+            // TODO: Inefficient implementation
+            foreach (string directory in directories)
+            {
+                // It cannot distinguish files from directories
+                if (Path.GetFileName(directory) == ".git")
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Filexer.Features;
 
 namespace Filexer
@@ -10,28 +12,12 @@ namespace Filexer
     {
         static void Main(string[] args)
         {
-            FileSystemScanner? scanner = null;
             var options = new FileSystemOptions
             {
             };
-            
-            if (OperatingSystem.IsWindows())
-            {
-                scanner = new FileSystemScanner(options);
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                scanner = new FileSystemScanner(options);
-            }
 
-            if (scanner != null)
-            {
-                scanner.Index();
-            }
-            else
-            {
-                Console.WriteLine("Operating system is supported, expected Linux or Windows.");
-            }
+            var scanner = new FileSystemScanner(options);
+            scanner.Index();
         }
     }
 }

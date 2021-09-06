@@ -11,8 +11,12 @@ The backup layout is as follows
 
 | Source | Target |
 | ------ | ------ |
-| `~/.ssh` | `User/.ssh` |
-| `~/.bashrc` | `User/.bashrc` |
+| `~/.ssh` | `dev/.ssh` |
+| `~/.bashrc` | `dev/.bashrc` |
+| `.pdf` | `documents/*.pdf` |
+| Git Repository | `projects/`
+| Office 365 File | `office/` |
+| Everything else | `misc/`
 
 Large files and binaries (images, videos, executables) are not indexed.
 
