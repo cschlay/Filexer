@@ -11,6 +11,7 @@ namespace Filexer.Features
         public string DevDirectory => $"{SyncDirectory}/dev";
         public string DocumentDirectory => $"{SyncDirectory}/documents";
         public string ProjectDirectory => $"{SyncDirectory}/projects";
+        public string SecretsDirectory => $"{SyncDirectory}/secrets";
         public string OfficeDirectory => $"{SyncDirectory}/office";
         public string MiscDirectory => $"{SyncDirectory}/misc";
         
@@ -27,8 +28,9 @@ namespace Filexer.Features
             "snap"
         };
 
-        public readonly string[] includedFileExtensions = { ".bashrc", ".pdf" };
+        public readonly string[] includedFileExtensions = { "", ".pub", ".bashrc", ".pdf", ".txt" };
 
+        // TODO: Put to own class
         public bool CheckFileIgnore(string path)
         {
             string extension = Path.GetExtension(path);

@@ -8,9 +8,10 @@ namespace Filexer.Features
     /// </summary>
     public class FileSystemScanner
     {
+        // TODO: Create JSON Source maps
         private readonly FileSystemOptions _options;
-        private DirectoryInfo _workingDirectory;
-        private GitService _git;
+        private readonly DirectoryInfo _workingDirectory;
+        private readonly GitService _git;
         
         /// <summary>
         /// Prepares scanning by settings.
@@ -19,11 +20,6 @@ namespace Filexer.Features
         public FileSystemScanner(FileSystemOptions options)
         {
             _options = options;
-        }
-        
-        /// <summary>Scans the system by most probable paths and user directories.</summary>
-        public void Index()
-        {
             try
             {
                 Directory.Delete(_options.SyncDirectory, true);
@@ -35,26 +31,48 @@ namespace Filexer.Features
             _git = new GitService(_workingDirectory);
             Console.WriteLine("Initializing sync directories...");
             Directory.CreateDirectory(_options.DevDirectory);
+            Directory.CreateDirectory($"{_options.DevDirectory}/.ssh");
             Directory.CreateDirectory(_options.DocumentDirectory);
             Directory.CreateDirectory(_options.ProjectDirectory);
             Directory.CreateDirectory(_options.OfficeDirectory);
             Directory.CreateDirectory(_options.MiscDirectory);
-         
+        }
+        
+        /// <summary>Scans the system by most probable paths and user directories.</summary>
+        public void Index()
+        {
             Console.WriteLine("Starting to index...");
             IndexDirectory(_options.UserHomePath, 0);
             Console.WriteLine($"Indexing finished.");
             Console.WriteLine($"Result stored at: {_workingDirectory.FullName}");
         }
 
-        private bool IndexFile(string path, int depth)
+        private bool IndexFile(string source, int depth)
         {
-            if (_options.CheckFileIgnore(path))
+            if (_options.CheckFileIgnore(source))
             {
                 return false;
             }
+            Console.WriteLine($"{depth} File: {source}");
+
+            var info = new FileInfo(source);
+            string timestamp = info.LastWriteTimeUtc.ToString("s").Replace(":", "");
+            if (info.Extension == ".pdf")
+            {
+                File.Copy(source, $"{_options.DocumentDirectory}/{timestamp}_{info.Name}");
+            } else if (info.FullName.Contains(".ssh"))
+            {
+                File.Copy(source, $"{_options.DevDirectory}/.ssh/{timestamp}_{info.Name}");
+            }
+            else if (info.Extension == ".pem")
+            {
+                File.Copy(source, $"{_options.SecretsDirectory}/{timestamp}_{info.Name}");
+            }
+            else
+            {
+                File.Copy(source, $"{_options.MiscDirectory}/{timestamp}_{info.Name}");
+            }
             
-            Console.WriteLine($"{depth} File: {path}");
-            // TODO: Index the files.
             return true;
         }
         

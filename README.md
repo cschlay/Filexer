@@ -13,10 +13,12 @@ The backup layout is as follows
 | ------ | ------ |
 | `~/.ssh` | `dev/.ssh` |
 | `~/.bashrc` | `dev/.bashrc` |
+| `.pem`| `dev/secrets` |
 | `.pdf` | `documents/*.pdf` |
 | Git Repository | `projects/`
 | Office 365 File | `office/` |
-| Everything else | `misc/`
+| Everything else | `misc/` |
+
 
 Large files and binaries (images, videos, executables) are not indexed.
 
