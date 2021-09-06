@@ -9,7 +9,9 @@ namespace Filexer.Features
     public class FileSystemScanner
     {
         private readonly FileSystemOptions _options;
-
+        private DirectoryInfo _workingDirectory;
+        private GitService _git;
+        
         /// <summary>
         /// Prepares scanning by settings.
         /// </summary>
@@ -22,8 +24,6 @@ namespace Filexer.Features
         /// <summary>Scans the system by most probable paths and user directories.</summary>
         public void Index()
         {
-            Console.WriteLine("Starting to index...");
-
             try
             {
                 Directory.Delete(_options.SyncDirectory, true);
@@ -31,17 +31,19 @@ namespace Filexer.Features
             catch (DirectoryNotFoundException)
             {
             }
-            DirectoryInfo sync = Directory.CreateDirectory(_options.SyncDirectory);
+            _workingDirectory = Directory.CreateDirectory(_options.SyncDirectory);
+            _git = new GitService(_workingDirectory);
             Console.WriteLine("Initializing sync directories...");
             Directory.CreateDirectory(_options.DevDirectory);
             Directory.CreateDirectory(_options.DocumentDirectory);
             Directory.CreateDirectory(_options.ProjectDirectory);
             Directory.CreateDirectory(_options.OfficeDirectory);
             Directory.CreateDirectory(_options.MiscDirectory);
-            
+         
+            Console.WriteLine("Starting to index...");
             IndexDirectory(_options.UserHomePath, 0);
             Console.WriteLine($"Indexing finished.");
-            Console.WriteLine($"Result stored at: {sync.FullName}");
+            Console.WriteLine($"Result stored at: {_workingDirectory.FullName}");
         }
 
         private bool IndexFile(string path, int depth)
@@ -70,7 +72,7 @@ namespace Filexer.Features
             if (ContainsRepository(directories))
             {
                 Console.WriteLine($"Git repository found: {info.Name}");
-                // TODO: Call it with "git clone"
+                _git.Clone(path);
                 // TODO: Check last pull
                 // TODO: Check last push
                 // TODO: Check that it is up to date
