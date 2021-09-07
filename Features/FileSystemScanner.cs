@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using Filexer.Utilities;
 
 namespace Filexer.Features
 {
@@ -47,7 +48,7 @@ namespace Filexer.Features
             Console.WriteLine($"Indexing finished.");
             Console.WriteLine("Creating archive from collected files...");
 
-            string timestamp = DateTime.UtcNow.ToString("s").Replace(":", "");
+            string timestamp = Timestamp.RemoveSeparators(DateTime.UtcNow);
             string archiveName = $"{_workingDirectory.Parent!.FullName}/backup_{timestamp}.zip";
             ZipFile.CreateFromDirectory(_workingDirectory.FullName, archiveName);
             Console.WriteLine($"Result stored at: {_workingDirectory.FullName}");
@@ -62,7 +63,7 @@ namespace Filexer.Features
             Console.WriteLine($"{depth} File: {source}");
 
             var info = new FileInfo(source);
-            string timestamp = info.LastWriteTimeUtc.ToString("s").Replace(":", "");
+            string timestamp = Timestamp.RemoveSeparators(info.LastWriteTimeUtc);
             if (info.Extension == ".pdf")
             {
                 File.Copy(source, $"{_options.DocumentDirectory}/{timestamp}_{info.Name}");

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Filexer.Utilities;
 
 namespace Filexer.Features
 {
@@ -17,7 +18,7 @@ namespace Filexer.Features
         public void Clone(DirectoryInfo source)
         {
             Console.WriteLine("Cloning repository...");
-            string timestamp = source.LastWriteTimeUtc.ToString("s").Replace(":", "");
+            string timestamp = Timestamp.RemoveSeparators(source.LastWriteTimeUtc);
             string target = $"{source.Name}_{timestamp}";
             var info = new ProcessStartInfo
             {
