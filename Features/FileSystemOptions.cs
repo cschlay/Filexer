@@ -1,26 +1,41 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
+using Filexer.Features.Indexer;
 
 namespace Filexer.Features
 {
     /// <summary>Platform and user options for scanning the file system.</summary>
     public class FileSystemOptions
     {
-        public string UserHomePath { get; set; }
-        public string SyncDirectory { get; set; } = "tmp/sync";
-        public string DevDirectory => $"{SyncDirectory}/dev";
-        public string DocumentDirectory => $"{SyncDirectory}/documents";
-        public string ProjectDirectory => $"{SyncDirectory}/projects";
-        public string SecretsDirectory => $"{SyncDirectory}/secrets";
-        public string OfficeDirectory => $"{SyncDirectory}/office";
-        public string MiscDirectory => $"{SyncDirectory}/misc";
+        private const string SyncDirectory = "tmp/sync";
+        public readonly string UserHomePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-        public IReadOnlyList<string> IncludedDirectoryNames { get; set; }
+        public string BackUpLocation { get; set; } = "";
+        public bool CloneGitRepositories { get; set; } = true;
+        public bool IncludeFilesWithoutExtension { get; set; } = true;
         
+        private IList<string> _includedRootDirectories = new List<string>();
+        public IList<string> IncludedRootDirectories
+        {
+            get => _includedRootDirectories;
+            set
+            {
+                _includedRootDirectories = value;
+                if (!_includedRootDirectories.Contains(UserHomePath))
+                {
+                    _includedRootDirectories.Add(UserHomePath);
+                }
+            }
+        }
+
+        public IReadOnlyList<string> IgnoredDirectories { get; set; } = new List<string>();
+        public FileExtensions IncludedExtensions { get; set; } = new();
+        
+        // TODO: Put these into a object e.g. OutputDirectories
+        public OutputDirectories Output = new(SyncDirectory);
+
         // TODO: Read these from a configuration file
         public readonly string[] excludedDirectoryNames =
         {
@@ -87,12 +102,6 @@ namespace Filexer.Features
             // TODO: Check the size
             
             return false;
-        }
-        
-        public FileSystemOptions()
-        {
-            Console.WriteLine("IS THIS CALLED");
-            UserHomePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         }
     }
 }

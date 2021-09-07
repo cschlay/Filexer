@@ -22,22 +22,9 @@ namespace Filexer.Features
         public FileSystemScanner(FileSystemOptions options)
         {
             _options = options;
-            try
-            {
-                Directory.Delete(_options.SyncDirectory, true);
-            }
-            catch (DirectoryNotFoundException)
-            {
-            }
-            _workingDirectory = Directory.CreateDirectory(_options.SyncDirectory);
+            _options.Output.Reset();
+            _workingDirectory = _options.Output.Initialize();
             _git = new GitService(_workingDirectory);
-            Console.WriteLine("Initializing sync directories...");
-            Directory.CreateDirectory(_options.DevDirectory);
-            Directory.CreateDirectory($"{_options.DevDirectory}/.ssh");
-            Directory.CreateDirectory(_options.DocumentDirectory);
-            Directory.CreateDirectory(_options.ProjectDirectory);
-            Directory.CreateDirectory(_options.OfficeDirectory);
-            Directory.CreateDirectory(_options.MiscDirectory);
         }
         
         /// <summary>Scans the system by most probable paths and user directories.</summary>
@@ -66,22 +53,22 @@ namespace Filexer.Features
             string timestamp = Timestamp.RemoveSeparators(info.LastWriteTimeUtc);
             if (info.Extension == ".pdf")
             {
-                File.Copy(source, $"{_options.DocumentDirectory}/{timestamp}_{info.Name}");
+                File.Copy(source, $"{_options.Output.DocumentDirectory}/{timestamp}_{info.Name}");
             } else if (info.FullName.Contains(".ssh"))
             {
-                File.Copy(source, $"{_options.DevDirectory}/.ssh/{timestamp}_{info.Name}");
+                File.Copy(source, $"{_options.Output.DevDirectory}/.ssh/{timestamp}_{info.Name}");
             }
             else if (info.Extension == ".pem")
             {
-                File.Copy(source, $"{_options.SecretsDirectory}/{timestamp}_{info.Name}");
+                File.Copy(source, $"{_options.Output.SecretsDirectory}/{timestamp}_{info.Name}");
             }
             else if (Array.IndexOf(FileSystemOptions.officeExtensions, info.Extension) > -1)
             {
-                File.Copy(source, $"{_options.OfficeDirectory}/{timestamp}_{info.Name}");
+                File.Copy(source, $"{_options.Output.OfficeDirectory}/{timestamp}_{info.Name}");
             }
             else
             {
-                File.Copy(source, $"{_options.MiscDirectory}/{timestamp}_{info.Name}");
+                File.Copy(source, $"{_options.Output.MiscDirectory}/{timestamp}_{info.Name}");
             }
             
             return true;

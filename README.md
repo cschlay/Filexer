@@ -33,7 +33,7 @@ The supported structure properties are defined below, you may copy it as startin
   // The default directory is user home i.e "/home/<username>
   "includedRootDirectories": [],
   // Exclude directories by pattern, by default everything is included
-  "ignoreDirectories": [
+  "ignoredDirectories": [
     "downloads",
     "node_modules"
   ],
