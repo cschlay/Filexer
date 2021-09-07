@@ -10,7 +10,6 @@ namespace Filexer.Features.Indexer
     /// </summary>
     public class FileSystemScanner
     {
-        // TODO: Create JSON Source maps
         private readonly FileSystemOptions _options;
         private readonly DirectoryInfo _workingDirectory;
         private readonly GitService _git;
@@ -94,8 +93,6 @@ namespace Filexer.Features.Indexer
             {
                 IndexDirectory(directory, depth + 1);
             }
-            
-            // TODO: Create index file
 
             string[] files = Directory.GetFiles(path);
             foreach (var file in files)
