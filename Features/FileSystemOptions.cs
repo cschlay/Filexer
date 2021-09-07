@@ -91,6 +91,7 @@ namespace Filexer.Features
         
         public FileSystemOptions()
         {
+            Console.WriteLine("IS THIS CALLED");
             UserHomePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         }
     }

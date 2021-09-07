@@ -15,9 +15,15 @@ namespace Filexer.Utilities
         public static T ReadFromJson<T>(string path)
         {
             byte[] data = File.ReadAllBytes(path);
-            var reader = new Utf8JsonReader(data);
+            var reader = new Utf8JsonReader(data, new JsonReaderOptions
+            {
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip
+            });
             var result = JsonSerializer.Deserialize<T>(ref reader, new JsonSerializerOptions
             {
+                AllowTrailingCommas = true,
+                ReadCommentHandling = JsonCommentHandling.Skip,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
             if (result == null)
