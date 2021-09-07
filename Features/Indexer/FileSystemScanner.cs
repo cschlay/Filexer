@@ -39,7 +39,7 @@ namespace Filexer.Features.Indexer
             Console.WriteLine($"Indexing finished.");
             Console.WriteLine("Creating archive from collected files...");
 
-            string timestamp = Timestamp.RemoveSeparators(DateTime.UtcNow);
+            string timestamp = DateTime.UtcNow.ToFileNameTime();
             string archiveName = $"{_workingDirectory.Parent!.FullName}/backup_{timestamp}.zip";
             ZipFile.CreateFromDirectory(_workingDirectory.FullName, archiveName);
             Console.WriteLine($"Result stored at: {_workingDirectory.FullName}");
@@ -58,7 +58,7 @@ namespace Filexer.Features.Indexer
                 return false;
             }
             var info = new FileInfo(source);
-            string timestamp = Timestamp.RemoveSeparators(info.LastWriteTimeUtc);
+            string timestamp = info.LastWriteTimeUtc.ToFileNameTime();
             string fileName = $"{timestamp}_{info.Name}";
             string outputFile = _options.Output.GetOutputDirectory((FileCategory)category) + fileName;
             
