@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Filexer.Features;
 using Filexer.Features.Indexer;
 using Filexer.Utilities;
 

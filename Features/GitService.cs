@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Filexer.Utilities;
 
 namespace Filexer.Features
@@ -9,6 +11,7 @@ namespace Filexer.Features
     public class GitService
     {
         private readonly DirectoryInfo _workingDirectory;
+        private const string GitFolderName = ".git";
 
         public GitService(DirectoryInfo workingDirectory)
         {
@@ -36,6 +39,11 @@ namespace Filexer.Features
             process.Start();
             process.WaitForExit();
             process.Close();
+        }
+        
+        public bool ContainsRepository(IEnumerable<string> directories)
+        {
+            return directories.Any(directory => Path.GetFileName(directory) == GitFolderName);
         }
     }
 }

@@ -31,7 +31,11 @@ namespace Filexer.Features.Indexer
         public void Index()
         {
             Console.WriteLine("Starting to index...");
-            IndexDirectory(_options.UserHomePath, 0);
+            foreach (string rootDirectory in _options.IncludedRootDirectories)
+            {
+                IndexDirectory(rootDirectory, 0);
+            }
+            
             Console.WriteLine($"Indexing finished.");
             Console.WriteLine("Creating archive from collected files...");
 
@@ -41,15 +45,18 @@ namespace Filexer.Features.Indexer
             Console.WriteLine($"Result stored at: {_workingDirectory.FullName}");
         }
 
-        private bool IndexFile(string source, int depth)
+        /// <summary>
+        /// Makes a synchronization copy of the file if meets the criteria.
+        /// </summary>
+        /// <param name="source">path of the file</param>
+        /// <returns>true if file is copied</returns>
+        private bool IndexFile(string source)
         {
             FileCategory? category = _options.Extensions.GetFileCategory(source);
             if (category == null)
             {
                 return false;
             }
-            Console.WriteLine($"{depth} File: {source}");
-
             var info = new FileInfo(source);
             string timestamp = Timestamp.RemoveSeparators(info.LastWriteTimeUtc);
             string fileName = $"{timestamp}_{info.Name}";
@@ -70,7 +77,7 @@ namespace Filexer.Features.Indexer
             
             Console.WriteLine($"{depth} Directory: {info.Name} ({path})");
             string[] directories = Directory.GetDirectories(path);
-            if (ContainsRepository(directories))
+            if (_git.ContainsRepository(directories))
             {
                 Console.WriteLine($"Git repository found: {info.Name}");
                 if (!_options.CloneGitRepositories)
@@ -79,41 +86,23 @@ namespace Filexer.Features.Indexer
                 }
                 
                 _git.Clone(info);
-                // TODO: Check last pull
-                // TODO: Check last push
-                // TODO: Check that it is up to date
                 return true;
             }
-            else
+
+            // Continue indexing normally
+            foreach (string directory in directories)
             {
-                // Continue indexing normally
-                foreach (string directory in directories)
-                {
-                    IndexDirectory(directory, depth + 1);
-                }
+                IndexDirectory(directory, depth + 1);
             }
+            
+            // TODO: Create index file
 
             string[] files = Directory.GetFiles(path);
             foreach (var file in files)
             {
-                IndexFile(file, depth);
+                IndexFile(file);
             }
             return true;
-        }
-
-        private bool ContainsRepository(string[] directories)
-        {
-            // TODO: Inefficient implementation
-            foreach (string directory in directories)
-            {
-                // It cannot distinguish files from directories
-                if (Path.GetFileName(directory) == ".git")
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }
