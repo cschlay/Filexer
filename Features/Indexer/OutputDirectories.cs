@@ -18,6 +18,18 @@ namespace Filexer.Features.Indexer
             BasePath = basePath;
         }
 
+        public string GetOutputDirectory(FileCategory category)
+        {
+            return category switch
+            {
+                FileCategory.Development => DevDirectory,
+                FileCategory.Document => DocumentDirectory,
+                FileCategory.Office => OfficeDirectory,
+                FileCategory.Secrets => SecretsDirectory,
+                _ => MiscDirectory
+            };
+        }
+
         public DirectoryInfo Initialize()
         {
             Console.WriteLine("Initializing sync directories...");

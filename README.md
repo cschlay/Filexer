@@ -37,15 +37,15 @@ The supported structure properties are defined below, you may copy it as startin
     "downloads",
     "node_modules"
   ],
-  // Recommended to use, e.g. Dockerfile doesn't have one
-  "includeFilesWithoutExtension": true,
   // Explicitly state the extensions you want
   "includedExtensions": {
+    // Recommended to use, e.g. Dockerfile doesn't have one
+    "includeFilesWithoutExtension": true,
     "development": [
       ".md",
       ".json",
       ".sh",
-      ".yaml",
+      ".yaml"
     ],
     "documents": [
       ".pdf"

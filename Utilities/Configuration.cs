@@ -1,5 +1,6 @@
 using System;
 using Filexer.Features;
+using Filexer.Features.Indexer;
 
 namespace Filexer.Utilities
 {

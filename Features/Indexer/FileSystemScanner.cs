@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using Filexer.Utilities;
 
-namespace Filexer.Features
+namespace Filexer.Features.Indexer
 {
     /// <summary>
     /// Contains utilities to scan the file system.
@@ -43,7 +43,8 @@ namespace Filexer.Features
 
         private bool IndexFile(string source, int depth)
         {
-            if (_options.CheckFileIgnore(source))
+            FileCategory? category = _options.Extensions.GetFileCategory(source);
+            if (category == null)
             {
                 return false;
             }
@@ -51,26 +52,10 @@ namespace Filexer.Features
 
             var info = new FileInfo(source);
             string timestamp = Timestamp.RemoveSeparators(info.LastWriteTimeUtc);
-            if (info.Extension == ".pdf")
-            {
-                File.Copy(source, $"{_options.Output.DocumentDirectory}/{timestamp}_{info.Name}");
-            } else if (info.FullName.Contains(".ssh"))
-            {
-                File.Copy(source, $"{_options.Output.DevDirectory}/.ssh/{timestamp}_{info.Name}");
-            }
-            else if (info.Extension == ".pem")
-            {
-                File.Copy(source, $"{_options.Output.SecretsDirectory}/{timestamp}_{info.Name}");
-            }
-            else if (Array.IndexOf(FileSystemOptions.officeExtensions, info.Extension) > -1)
-            {
-                File.Copy(source, $"{_options.Output.OfficeDirectory}/{timestamp}_{info.Name}");
-            }
-            else
-            {
-                File.Copy(source, $"{_options.Output.MiscDirectory}/{timestamp}_{info.Name}");
-            }
+            string fileName = $"{timestamp}_{info.Name}";
+            string outputFile = _options.Output.GetOutputDirectory((FileCategory)category) + fileName;
             
+            File.Copy(source, outputFile);
             return true;
         }
         
@@ -78,7 +63,7 @@ namespace Filexer.Features
         {
             var info = new DirectoryInfo(path);
 
-            if (_options.CheckDirectoryIgnore(info))
+            if (_options.IsDirectoryIgnored(info))
             {
                 return false;
             }
@@ -88,6 +73,11 @@ namespace Filexer.Features
             if (ContainsRepository(directories))
             {
                 Console.WriteLine($"Git repository found: {info.Name}");
+                if (!_options.CloneGitRepositories)
+                {
+                    return false;
+                }
+                
                 _git.Clone(info);
                 // TODO: Check last pull
                 // TODO: Check last push
