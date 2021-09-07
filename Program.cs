@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Filexer.Features;
+using Filexer.Utilities;
 
 namespace Filexer
 {
@@ -9,10 +10,7 @@ namespace Filexer
     {
         static void Main(string[] args)
         {
-            var options = new FileSystemOptions
-            {
-            };
-
+            FileSystemOptions options = Configuration.ReadOptions();
             var scanner = new FileSystemScanner(options);
             scanner.Index();
         }

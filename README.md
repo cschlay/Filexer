@@ -21,3 +21,8 @@ The backup layout is quite flat since it is developer-centric backup so that mig
 Large files such as (images, videos, executables), installed software, and binaries are not indexed.
 
 Each back up will output a `.zip` as `YYYY-MM-DD-Thhmm.filexer.zip`. The time stamp is a variant of ISO 8601 standard.
+
+## Configuration
+
+The default location for configuration file is at home directory `~/.filexer.json`.
+It can be overriden with environment variable e.g. `FILEXER_CONFIG_FILE=~/custom-folder/config.json`.

@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 namespace Filexer.Features
 {
@@ -15,6 +18,8 @@ namespace Filexer.Features
         public string SecretsDirectory => $"{SyncDirectory}/secrets";
         public string OfficeDirectory => $"{SyncDirectory}/office";
         public string MiscDirectory => $"{SyncDirectory}/misc";
+
+        public IReadOnlyList<string> IncludedDirectoryNames { get; set; }
         
         // TODO: Read these from a configuration file
         public readonly string[] excludedDirectoryNames =
@@ -87,6 +92,6 @@ namespace Filexer.Features
         public FileSystemOptions()
         {
             UserHomePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        }        
+        }
     }
 }
